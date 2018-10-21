@@ -10,6 +10,20 @@ class ProjectsScreen extends StatefulWidget {
 }
 
 class _ProjectScreenState extends State<ProjectsScreen> {
+  final List<Category> tasks = [
+    Category(Icons.person, Colors.blue, "Personal", []),
+    Category(Icons.content_paste, Colors.orange, "Work", []),
+  ];
+
+  ColorTween backgroundTween;
+  Color backgroundColor;
+
+  @override
+  void initState() {
+    backgroundColor = tasks[0].color;
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     final Size itemSize = Size(280.0, 350.0);
@@ -17,7 +31,7 @@ class _ProjectScreenState extends State<ProjectsScreen> {
     final screenWidth = MediaQuery.of(context).size.width;
     final horizontalPadding = (screenWidth - itemSize.width) / 2;
     return Container(
-      color: Colors.orange,
+      color: backgroundColor,
       child: SafeArea(
         child: Stack(
           children: <Widget>[
@@ -66,17 +80,25 @@ class _ProjectScreenState extends State<ProjectsScreen> {
                 Expanded(
                   child: Container(
                     child: SnapList(
+                      progressUpdate: (progress, center, next) {
+                        setState(() {
+                          backgroundTween = ColorTween(
+                              begin: tasks[center].color,
+                              end: tasks[next].color);
+                          backgroundColor = backgroundTween.transform(progress / 100);
+                        });
+                      },
                       alignment: Alignment.topCenter,
                       separatorProvider: (_) => Size.fromWidth(12.0),
                       sizeProvider: (_) => itemSize,
                       padding: EdgeInsets.only(
                           left: horizontalPadding, right: horizontalPadding),
-                      count: 3,
+                      count: tasks.length,
                       builder: (context, data) {
                         final position = data.current;
                         return CategoryCard(
                           size: itemSize,
-                          category: Category(Icons.content_paste, Colors.orange, "Fun", []),
+                          category: tasks[position],
                         );
                       },
                     ),
