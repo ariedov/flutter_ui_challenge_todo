@@ -1,0 +1,3 @@
+[submodule "snaplist"]
+	path = snaplist
+	url = https://github.com/ariedov/flutter_snaplist
