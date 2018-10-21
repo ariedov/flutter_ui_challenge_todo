@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_todo/category_card.dart';
 import 'package:flutter_todo/circular_image.dart';
+import 'package:flutter_todo/model.dart';
 import 'package:snaplist/snaplist.dart';
 
 class ProjectsScreen extends StatefulWidget {
@@ -17,7 +19,7 @@ class _ProjectScreenState extends State<ProjectsScreen> {
     return Container(
       color: Colors.orange,
       child: SafeArea(
-              child: Stack(
+        child: Stack(
           children: <Widget>[
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -55,7 +57,10 @@ class _ProjectScreenState extends State<ProjectsScreen> {
                 SizedBox(height: 48.0),
                 Padding(
                   padding: EdgeInsets.only(left: horizontalPadding),
-                  child: Text("today | 23 september".toUpperCase(), style: Theme.of(context).textTheme.caption,),
+                  child: Text(
+                    "today | 23 september".toUpperCase(),
+                    style: Theme.of(context).textTheme.caption,
+                  ),
                 ),
                 SizedBox(height: 8.0),
                 Expanded(
@@ -69,31 +74,9 @@ class _ProjectScreenState extends State<ProjectsScreen> {
                       count: 3,
                       builder: (context, data) {
                         final position = data.current;
-                        return Container(
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(16.0),
-                            boxShadow: <BoxShadow>[
-                              BoxShadow(
-                                color: Colors.black54,
-                                blurRadius: 8.0,
-                                offset: Offset(0.0, 12.0)
-                              )
-                            ],
-                          ),
-                          child: SizedBox(
-                            width: itemSize.width,
-                            height: itemSize.height,
-                            child: Column(
-                              children: <Widget>[
-                                // image
-                                Expanded(
-                                  child: Text("Work",
-                                      style: Theme.of(context).textTheme.display1),
-                                ),
-                              ],
-                            ),
-                          ),
+                        return CategoryCard(
+                          size: itemSize,
+                          category: Category(Icons.content_paste, Colors.orange, "Fun", []),
                         );
                       },
                     ),
