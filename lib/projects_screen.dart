@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_todo/category_card.dart';
 import 'package:flutter_todo/circular_image.dart';
+import 'package:flutter_todo/detail_screen.dart';
 import 'package:flutter_todo/model.dart';
 import 'package:snaplist/snaplist.dart';
 
@@ -85,7 +86,8 @@ class _ProjectScreenState extends State<ProjectsScreen> {
                           backgroundTween = ColorTween(
                               begin: tasks[center].color,
                               end: tasks[next].color);
-                          backgroundColor = backgroundTween.transform(progress / 100);
+                          backgroundColor =
+                              backgroundTween.transform(progress / 100);
                         });
                       },
                       alignment: Alignment.topCenter,
@@ -99,6 +101,10 @@ class _ProjectScreenState extends State<ProjectsScreen> {
                         return CategoryCard(
                           size: itemSize,
                           category: tasks[position],
+                          onPressed: () => Navigator.of(context).push(
+                              MaterialPageRoute(
+                                  builder: (_) =>
+                                      DetailScreen(category: tasks[position]))),
                         );
                       },
                     ),
