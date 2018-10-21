@@ -13,6 +13,7 @@ class MyApp extends StatelessWidget {
         textTheme: TextTheme(
           body1: TextStyle(color: Colors.white, fontSize: 28.0),
           body2: TextStyle(color: Colors.white54, fontSize: 14.0),
+          caption: TextStyle(color: Colors.white, fontSize: 12.0, fontWeight: FontWeight.bold),
         )
       ),
       home: MyHomePage(title: 'Flutter Demo Home Page'),
@@ -34,9 +35,9 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        child: ProjectsScreen(),
-      ),
+      body: 
+        ProjectsScreen(),
+      
     );
   }
 }
