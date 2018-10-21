@@ -1,8 +1,5 @@
 # flutter_todo
 
-A new Flutter project.
+A showcase/portfolio todo app.
 
-## Getting Started
-
-For help getting started with Flutter, view our online
-[documentation](https://flutter.io/).
+Inspired by https://dribbble.com/shots/3812962-iPhone-X-Todo-Concept
