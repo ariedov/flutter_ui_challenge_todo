@@ -18,12 +18,18 @@ class ScreenTransition extends AnimatedWidget {
         revealData.leftTween.evaluate(animation),
         revealData.topTween.evaluate(animation),
         revealData.rightTween.evaluate(animation),
-        revealData.bottomTween.evaluate(animation), 
-        16.0 - (animation.value * 16.0), 
+        revealData.bottomTween.evaluate(animation),
+        16.0 - (animation.value * 16.0),
         16.0 - (animation.value * 16.0));
     return ClipRRect(
       borderRadius: BorderRadius.circular(16.0 - (animation.value * 16.0)),
-      child: screen,
+      child: Container(
+        color: Colors.white,
+        child: Opacity(
+          opacity: animation.value,
+          child: screen,
+        ),
+      ),
       clipper: TransitionClipper(cropRect),
     );
   }
