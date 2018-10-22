@@ -40,24 +40,29 @@ class _DetailScreenState extends State<DetailScreen> {
                 height: 24.0,
               ),
               Expanded(
-                child: ListView.builder(
-                  itemBuilder: (BuildContext context, int index) {
-                    final task = widget.category.tasks[index];
-                    return TodoItem(
-                      task: task,
-                      taskStateChanged: (state) {
-                        setState(() {
-                          widget.category.tasks[index] = Task(task.name, state);
-                        });
-                      },
-                      taskRemoved: () {
-                        setState(() {
-                          widget.category.tasks.removeAt(index);
-                        });
-                      },
-                    );
-                  },
-                  itemCount: widget.category.tasks.length,
+                child: AnimatedOpacity(
+                  opacity: 1.0,
+                  child: ListView.builder(
+                    itemBuilder: (BuildContext context, int index) {
+                      final task = widget.category.tasks[index];
+                      return TodoItem(
+                        task: task,
+                        taskStateChanged: (state) {
+                          setState(() {
+                            widget.category.tasks[index] =
+                                Task(task.name, state);
+                          });
+                        },
+                        taskRemoved: () {
+                          setState(() {
+                            widget.category.tasks.removeAt(index);
+                          });
+                        },
+                      );
+                    },
+                    itemCount: widget.category.tasks.length,
+                  ),
+                  duration: Duration(milliseconds: 300),
                 ),
               )
             ],

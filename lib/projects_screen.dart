@@ -3,6 +3,7 @@ import 'package:flutter_todo/category_card.dart';
 import 'package:flutter_todo/circular_image.dart';
 import 'package:flutter_todo/data_provider.dart';
 import 'package:flutter_todo/detail/detail_screen.dart';
+import 'package:flutter_todo/detail_reveal.dart';
 import 'package:snaplist/snaplist.dart';
 
 class ProjectsScreen extends StatefulWidget {
@@ -154,57 +155,4 @@ class _ProjectScreenState extends State<ProjectsScreen> {
         Rect.fromLTWH(0.0, 0.0, screenSize.width, screenSize.height));
     return revealData;
   }
-}
-
-class ScreenTransition extends AnimatedWidget {
-  final Widget screen;
-  final Animation<double> animation;
-  final RevealData revealData;
-
-  const ScreenTransition({
-    Key key,
-    this.screen,
-    this.animation,
-    this.revealData,
-  }) : super(key: key, listenable: animation);
-
-  @override
-  Widget build(BuildContext context) {
-    print("Animation value: ${animation.value}");
-    final cropRect = Rect.fromLTRB(
-        revealData.leftTween.evaluate(animation),
-        revealData.topTween.evaluate(animation),
-        revealData.rightTween.evaluate(animation),
-        revealData.bottomTween.evaluate(animation));
-    return ClipRect(
-      child: screen,
-      clipper: TransitionClipper(cropRect),
-    );
-  }
-}
-
-class TransitionClipper extends CustomClipper<Rect> {
-  final Rect clip;
-
-  TransitionClipper(this.clip);
-
-  @override
-  Rect getClip(Size size) => clip;
-
-  @override
-  bool shouldReclip(CustomClipper<Rect> oldClipper) => true;
-}
-
-class RevealData {
-  final Rect initial;
-  final Rect expected;
-
-  RevealData(this.initial, this.expected);
-
-  Tween<double> get leftTween => Tween(begin: initial.left, end: expected.left);
-  Tween<double> get topTween => Tween(begin: initial.top, end: expected.top);
-  Tween<double> get rightTween =>
-      Tween(begin: initial.right, end: expected.right);
-  Tween<double> get bottomTween =>
-      Tween(begin: initial.bottom, end: expected.bottom);
 }
