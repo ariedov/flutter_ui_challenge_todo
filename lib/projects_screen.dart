@@ -98,13 +98,30 @@ class _ProjectScreenState extends State<ProjectsScreen> {
                       count: tasks.length,
                       builder: (context, data) {
                         final position = data.current;
+                        GlobalKey cardKey = GlobalKey();
                         return CategoryCard(
+                          key: cardKey,
                           size: itemSize,
                           category: tasks[position],
                           onPressed: () => Navigator.of(context).push(
-                              MaterialPageRoute(
-                                  builder: (_) =>
-                                      DetailScreen(category: tasks[position]))),
+                                PageRouteBuilder(
+                                    pageBuilder: (BuildContext context,
+                                        Animation animation,
+                                        Animation secondaryAnimation) {
+                                      return DetailScreen(
+                                          category: tasks[position]);
+                                    },
+                                    transitionsBuilder: (BuildContext context,
+                                        Animation<double> animation,
+                                        Animation<double> secondaryAnimation,
+                                        Widget child) {
+                                          return ScaleTransition(
+                                            alignment: Alignment.bottomCenter,
+                                            scale: animation,
+                                            child: child,
+                                          );
+                                        }),
+                              ),
                         );
                       },
                     ),
