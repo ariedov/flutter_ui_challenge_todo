@@ -19,7 +19,7 @@ class CategoryInfo extends StatelessWidget {
           SizedBox(height: 4.0),
           Text(category.title, style: Theme.of(context).textTheme.display1),
           SizedBox(height: 12.0),
-          CategoryProgress(color: category.color),
+          CategoryProgress(category: category),
         ],
       ),
     );

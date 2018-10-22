@@ -3,7 +3,6 @@ import 'package:flutter_todo/category_card.dart';
 import 'package:flutter_todo/circular_image.dart';
 import 'package:flutter_todo/data_provider.dart';
 import 'package:flutter_todo/detail/detail_screen.dart';
-import 'package:flutter_todo/model.dart';
 import 'package:snaplist/snaplist.dart';
 
 class ProjectsScreen extends StatefulWidget {
