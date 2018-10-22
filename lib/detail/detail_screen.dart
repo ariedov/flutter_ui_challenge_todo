@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_todo/category_icon.dart';
 import 'package:flutter_todo/category_info.dart';
+import 'package:flutter_todo/detail/todo_item.dart';
 import 'package:flutter_todo/model.dart';
 
 class DetailScreen extends StatefulWidget {
@@ -35,6 +36,30 @@ class _DetailScreenState extends State<DetailScreen> {
               Hero(
                   tag: "categoryInfo${widget.category.title}",
                   child: CategoryInfo(category: widget.category)),
+              SizedBox(
+                height: 24.0,
+              ),
+              Expanded(
+                child: ListView.builder(
+                  itemBuilder: (BuildContext context, int index) {
+                    final task = widget.category.tasks[index];
+                    return TodoItem(
+                      task: task,
+                      taskStateChanged: (state) {
+                        setState(() {
+                          widget.category.tasks[index] = Task(task.name, state);
+                        });
+                      },
+                      taskRemoved: () {
+                        setState(() {
+                          widget.category.tasks.removeAt(index);
+                        });
+                      },
+                    );
+                  },
+                  itemCount: widget.category.tasks.length,
+                ),
+              )
             ],
           ),
         ),

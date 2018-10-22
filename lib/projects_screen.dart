@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_todo/category_card.dart';
 import 'package:flutter_todo/circular_image.dart';
-import 'package:flutter_todo/detail_screen.dart';
+import 'package:flutter_todo/data_provider.dart';
+import 'package:flutter_todo/detail/detail_screen.dart';
 import 'package:flutter_todo/model.dart';
 import 'package:snaplist/snaplist.dart';
 
@@ -11,17 +12,15 @@ class ProjectsScreen extends StatefulWidget {
 }
 
 class _ProjectScreenState extends State<ProjectsScreen> {
-  final List<Category> tasks = [
-    Category(Icons.person, Colors.blue, "Personal", []),
-    Category(Icons.content_paste, Colors.orange, "Work", []),
-  ];
+
+  DataProvider provider = DataProvider();
 
   ColorTween backgroundTween;
   Color backgroundColor;
 
   @override
   void initState() {
-    backgroundColor = tasks[0].color;
+    backgroundColor = provider.list[0].color;
     super.initState();
   }
 
@@ -84,8 +83,8 @@ class _ProjectScreenState extends State<ProjectsScreen> {
                       progressUpdate: (progress, center, next) {
                         setState(() {
                           backgroundTween = ColorTween(
-                              begin: tasks[center].color,
-                              end: tasks[next].color);
+                              begin: provider.list[center].color,
+                              end: provider.list[next].color);
                           backgroundColor =
                               backgroundTween.transform(progress / 100);
                         });
@@ -95,21 +94,21 @@ class _ProjectScreenState extends State<ProjectsScreen> {
                       sizeProvider: (_) => itemSize,
                       padding: EdgeInsets.only(
                           left: horizontalPadding, right: horizontalPadding),
-                      count: tasks.length,
+                      count: provider.list.length,
                       builder: (context, data) {
                         final position = data.current;
                         GlobalKey cardKey = GlobalKey();
                         return CategoryCard(
                           key: cardKey,
                           size: itemSize,
-                          category: tasks[position],
+                          category: provider.list[position],
                           onPressed: () => Navigator.of(context).push(
                                 PageRouteBuilder(
                                     pageBuilder: (BuildContext context,
                                         Animation animation,
                                         Animation secondaryAnimation) {
                                       return DetailScreen(
-                                          category: tasks[position]);
+                                          category: provider.list[position]);
                                     },
                                     transitionsBuilder: (BuildContext context,
                                         Animation<double> animation,
