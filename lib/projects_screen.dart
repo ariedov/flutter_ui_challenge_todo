@@ -11,15 +11,17 @@ class ProjectsScreen extends StatefulWidget {
 }
 
 class _ProjectScreenState extends State<ProjectsScreen> {
-
   DataProvider provider = DataProvider();
 
   ColorTween backgroundTween;
   Color backgroundColor;
 
+  RevealData revealData;
+
   @override
   void initState() {
     backgroundColor = provider.list[0].color;
+
     super.initState();
   }
 
@@ -96,29 +98,31 @@ class _ProjectScreenState extends State<ProjectsScreen> {
                       count: provider.list.length,
                       builder: (context, data) {
                         final position = data.current;
-                        GlobalKey cardKey = GlobalKey();
+
+                        final cardKey = GlobalKey();
                         return CategoryCard(
                           key: cardKey,
                           size: itemSize,
                           category: provider.list[position],
                           onPressed: () => Navigator.of(context).push(
-                                PageRouteBuilder(
-                                    pageBuilder: (BuildContext context,
-                                        Animation animation,
+                                PageRouteBuilder(pageBuilder:
+                                    (BuildContext context, Animation animation,
                                         Animation secondaryAnimation) {
-                                      return DetailScreen(
-                                          category: provider.list[position]);
-                                    },
-                                    transitionsBuilder: (BuildContext context,
-                                        Animation<double> animation,
-                                        Animation<double> secondaryAnimation,
-                                        Widget child) {
-                                          return ScaleTransition(
-                                            alignment: Alignment.bottomCenter,
-                                            scale: animation,
-                                            child: child,
-                                          );
-                                        }),
+                                  return DetailScreen(
+                                      category: provider.list[position]);
+                                }, transitionsBuilder: (BuildContext context,
+                                    Animation<double> animation,
+                                    Animation<double> secondaryAnimation,
+                                    Widget child) {
+                                  RevealData revealData =
+                                      _captureRevealData(cardKey);
+
+                                  return ScreenTransition(
+                                    animation: animation,
+                                    screen: child,
+                                    revealData: revealData,
+                                  );
+                                }),
                               ),
                         );
                       },
@@ -132,4 +136,75 @@ class _ProjectScreenState extends State<ProjectsScreen> {
       ),
     );
   }
+
+  _captureRevealData(GlobalKey key) {
+    if (revealData != null) {
+      return revealData;
+    }
+
+    BuildContext context = key.currentContext;
+    final RenderBox box = context.findRenderObject();
+    final pos = box.localToGlobal(Offset.zero);
+    final size = box.size;
+
+    final screenSize = MediaQuery.of(context).size;
+
+    revealData = RevealData(
+        Rect.fromLTWH(pos.dx, pos.dy, size.width, size.height),
+        Rect.fromLTWH(0.0, 0.0, screenSize.width, screenSize.height));
+    return revealData;
+  }
+}
+
+class ScreenTransition extends AnimatedWidget {
+  final Widget screen;
+  final Animation<double> animation;
+  final RevealData revealData;
+
+  const ScreenTransition({
+    Key key,
+    this.screen,
+    this.animation,
+    this.revealData,
+  }) : super(key: key, listenable: animation);
+
+  @override
+  Widget build(BuildContext context) {
+    print("Animation value: ${animation.value}");
+    final cropRect = Rect.fromLTRB(
+        revealData.leftTween.evaluate(animation),
+        revealData.topTween.evaluate(animation),
+        revealData.rightTween.evaluate(animation),
+        revealData.bottomTween.evaluate(animation));
+    return ClipRect(
+      child: screen,
+      clipper: TransitionClipper(cropRect),
+    );
+  }
+}
+
+class TransitionClipper extends CustomClipper<Rect> {
+  final Rect clip;
+
+  TransitionClipper(this.clip);
+
+  @override
+  Rect getClip(Size size) => clip;
+
+  @override
+  bool shouldReclip(CustomClipper<Rect> oldClipper) => true;
+}
+
+class RevealData {
+  final Rect initial;
+  final Rect expected;
+
+  RevealData(this.initial, this.expected);
+
+  Tween<double> get leftTween => Tween(begin: initial.left, end: expected.left);
+  Tween<double> get topTween => Tween(begin: initial.top, end: expected.top);
+  Tween<double> get rightTween =>
+      Tween(begin: initial.right, end: expected.right);
+  Tween<double> get bottomTween =>
+      Tween(begin: initial.bottom, end: expected.bottom);
 }
