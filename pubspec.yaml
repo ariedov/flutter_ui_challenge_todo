@@ -15,6 +15,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_redux: ^0.5.2
   snaplist:
     path: 'snaplist'
 

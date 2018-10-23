@@ -1,19 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_redux/flutter_redux.dart';
 import 'package:flutter_todo/category_card.dart';
 import 'package:flutter_todo/circular_image.dart';
 import 'package:flutter_todo/data_provider.dart';
 import 'package:flutter_todo/detail/detail_screen.dart';
 import 'package:flutter_todo/detail_reveal.dart';
+import 'package:flutter_todo/model.dart';
 import 'package:snaplist/snaplist.dart';
 
 class ProjectsScreen extends StatefulWidget {
+  final Color backgroundColor;
+  const ProjectsScreen({Key key, this.backgroundColor}) : super(key: key);
+
   @override
   State<StatefulWidget> createState() => _ProjectScreenState();
 }
 
 class _ProjectScreenState extends State<ProjectsScreen> {
-  DataProvider provider = DataProvider();
-
   ColorTween backgroundTween;
   Color backgroundColor;
 
@@ -21,7 +24,7 @@ class _ProjectScreenState extends State<ProjectsScreen> {
 
   @override
   void initState() {
-    backgroundColor = provider.list[0].color;
+    backgroundColor = widget.backgroundColor;
 
     super.initState();
   }
@@ -63,8 +66,18 @@ class _ProjectScreenState extends State<ProjectsScreen> {
                       ),
                       Text("Looks like feel good.",
                           style: Theme.of(context).textTheme.body2),
-                      Text("You have 3 tasks to do today.",
-                          style: Theme.of(context).textTheme.body2),
+                      StoreConnector<CategoryState, int>(
+                        converter: (store) => store.state.categories.fold(
+                            0,
+                            (prev, element) =>
+                                prev +
+                                element.tasks
+                                    .where((task) => !task.done)
+                                    .length),
+                        builder: (context, count) => Text(
+                            "You have $count tasks to do today.",
+                            style: Theme.of(context).textTheme.body2),
+                      ),
                     ],
                   ),
                 ),
@@ -81,52 +94,59 @@ class _ProjectScreenState extends State<ProjectsScreen> {
                 SizedBox(height: 8.0),
                 Expanded(
                   child: Container(
-                    child: SnapList(
-                      progressUpdate: (progress, center, next) {
-                        setState(() {
-                          backgroundTween = ColorTween(
-                              begin: provider.list[center].color,
-                              end: provider.list[next].color);
-                          backgroundColor =
-                              backgroundTween.transform(progress / 100);
-                        });
-                      },
-                      alignment: Alignment.topCenter,
-                      separatorProvider: (_) => Size.fromWidth(12.0),
-                      sizeProvider: (_) => itemSize,
-                      padding: EdgeInsets.only(
-                          left: horizontalPadding, right: horizontalPadding),
-                      count: provider.list.length,
-                      builder: (context, data) {
-                        final position = data.current;
+                    child: StoreConnector<CategoryState, List<Category>>(
+                        converter: (store) => store.state.categories,
+                        builder: (context, categories) {
+                          return SnapList(
+                            progressUpdate: (progress, center, next) {
+                              setState(() {
+                                backgroundTween = ColorTween(
+                                    begin: categories[center].color,
+                                    end: categories[next].color);
+                                backgroundColor =
+                                    backgroundTween.transform(progress / 100);
+                              });
+                            },
+                            alignment: Alignment.topCenter,
+                            separatorProvider: (_) => Size.fromWidth(12.0),
+                            sizeProvider: (_) => itemSize,
+                            padding: EdgeInsets.only(
+                                left: horizontalPadding,
+                                right: horizontalPadding),
+                            count: categories.length,
+                            builder: (context, data) {
+                              final position = data.current;
 
-                        final cardKey = GlobalKey();
-                        return CategoryCard(
-                          key: cardKey,
-                          category: provider.list[position],
-                          onPressed: () => Navigator.of(context).push(
-                                PageRouteBuilder(pageBuilder:
-                                    (BuildContext context, Animation animation,
-                                        Animation secondaryAnimation) {
-                                  return DetailScreen(
-                                      category: provider.list[position]);
-                                }, transitionsBuilder: (BuildContext context,
-                                    Animation<double> animation,
-                                    Animation<double> secondaryAnimation,
-                                    Widget child) {
-                                  RevealData revealData =
-                                      _captureRevealData(cardKey);
+                              final cardKey = GlobalKey();
+                              return CategoryCard(
+                                key: cardKey,
+                                category: categories[position],
+                                onPressed: () => Navigator.of(context).push(
+                                      PageRouteBuilder(pageBuilder:
+                                          (BuildContext context,
+                                              Animation animation,
+                                              Animation secondaryAnimation) {
+                                        return DetailScreen(
+                                            category: categories[position]);
+                                      }, transitionsBuilder: (BuildContext
+                                              context,
+                                          Animation<double> animation,
+                                          Animation<double> secondaryAnimation,
+                                          Widget child) {
+                                        RevealData revealData =
+                                            _captureRevealData(cardKey);
 
-                                  return ScreenTransition(
-                                    animation: animation,
-                                    screen: child,
-                                    revealData: revealData,
-                                  );
-                                }),
-                              ),
-                        );
-                      },
-                    ),
+                                        return ScreenTransition(
+                                          animation: animation,
+                                          screen: child,
+                                          revealData: revealData,
+                                        );
+                                      }),
+                                    ),
+                              );
+                            },
+                          );
+                        }),
                   ),
                 ),
               ],
