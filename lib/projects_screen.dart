@@ -103,7 +103,6 @@ class _ProjectScreenState extends State<ProjectsScreen> {
                         final cardKey = GlobalKey();
                         return CategoryCard(
                           key: cardKey,
-                          size: itemSize,
                           category: provider.list[position],
                           onPressed: () => Navigator.of(context).push(
                                 PageRouteBuilder(pageBuilder:

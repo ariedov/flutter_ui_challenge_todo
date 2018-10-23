@@ -4,17 +4,14 @@ import 'package:flutter_todo/category_info.dart';
 import 'package:flutter_todo/model.dart';
 
 class CategoryCard extends StatelessWidget {
-  final Size size;
   final Category category;
   final VoidCallback onPressed;
 
   CategoryCard({
     Key key,
-    @required this.size,
     @required this.category,
     this.onPressed,
   }) : super(key: key) {
-    assert(this.size != null);
     assert(this.category != null);
   }
 
@@ -30,30 +27,26 @@ class CategoryCard extends StatelessWidget {
         ],
       ),
       child: InkWell(
-        child: SizedBox(
-          width: size.width,
-          height: size.height,
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                // image
-                Expanded(
-                  child: Align(
-                    alignment: Alignment.topLeft,
-                    child: Hero(
-                      tag: "categoryIcon${category.title}",
-                      child: CategoryIcon(
-                          icon: category.icon, color: category.color),
-                    ),
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              // image
+              Expanded(
+                child: Align(
+                  alignment: Alignment.topLeft,
+                  child: Hero(
+                    tag: "categoryIcon${category.title}",
+                    child: CategoryIcon(
+                        icon: category.icon, color: category.color),
                   ),
                 ),
-                Hero(
-                    tag: "categoryInfo${category.title}",
-                    child: CategoryInfo(category: category)),
-              ],
-            ),
+              ),
+              Hero(
+                  tag: "categoryInfo${category.title}",
+                  child: CategoryInfo(category: category)),
+            ],
           ),
         ),
         onTap: onPressed,
