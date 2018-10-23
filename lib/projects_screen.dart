@@ -138,11 +138,10 @@ class _ProjectScreenState extends State<ProjectsScreen> {
   }
 
   _captureRevealData(GlobalKey key) {
-    if (revealData != null) {
+    BuildContext context = key.currentContext;
+    if (context == null) {
       return revealData;
     }
-
-    BuildContext context = key.currentContext;
     final RenderBox box = context.findRenderObject();
     final pos = box.localToGlobal(Offset.zero);
     final size = box.size;
