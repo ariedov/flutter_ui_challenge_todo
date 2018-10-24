@@ -108,15 +108,13 @@ class _ProjectScreenState extends State<ProjectsScreen> {
                               });
                             },
                             alignment: Alignment.topCenter,
-                            separatorProvider: (_) => Size.fromWidth(12.0),
-                            sizeProvider: (_) => itemSize,
+                            separatorProvider: (position, _) => Size.fromWidth(12.0),
+                            sizeProvider: (position, _) => itemSize,
                             padding: EdgeInsets.only(
                                 left: horizontalPadding,
                                 right: horizontalPadding),
                             count: categories.length,
-                            builder: (context, data) {
-                              final position = data.current;
-
+                            builder: (context, position, _) {
                               final cardKey = GlobalKey();
                               return CategoryCard(
                                 key: cardKey,
