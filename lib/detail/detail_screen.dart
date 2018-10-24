@@ -56,7 +56,7 @@ class _DetailScreenState extends State<DetailScreen> {
                               task: task
                             );
                           },
-                          itemCount: widget.category.tasks.length,
+                          itemCount: tasks.length,
                         );
                       }),
                   duration: Duration(milliseconds: 300),

@@ -31,7 +31,7 @@ CategoryState stateReducer(CategoryState oldState, dynamic action) {
             category.title, category.tasks);
       }
       return category;
-    }));
+    }).toList());
   }
 
   throw "No such action $action";
