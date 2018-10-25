@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:flutter_todo/category_icon.dart';
 import 'package:flutter_todo/category_info.dart';
+import 'package:flutter_todo/create/create_screen.dart';
 import 'package:flutter_todo/data_provider.dart';
 import 'package:flutter_todo/detail/todo_item.dart';
 import 'package:flutter_todo/model.dart';
@@ -45,16 +46,16 @@ class _DetailScreenState extends State<DetailScreen> {
                 child: AnimatedOpacity(
                   opacity: 1.0,
                   child: StoreConnector<CategoryState, List<Task>>(
-                      converter: (store) => store.state.categories.firstWhere(
-                          (category) => category.id == widget.category.id).tasks,
+                      converter: (store) => store.state.categories
+                          .firstWhere(
+                              (category) => category.id == widget.category.id)
+                          .tasks,
                       builder: (context, tasks) {
                         return ListView.builder(
                           itemBuilder: (BuildContext context, int index) {
                             final task = tasks[index];
                             return TodoItem(
-                              category: widget.category,
-                              task: task
-                            );
+                                category: widget.category, task: task);
                           },
                           itemCount: tasks.length,
                         );
@@ -64,6 +65,19 @@ class _DetailScreenState extends State<DetailScreen> {
               )
             ],
           ),
+        ),
+      ),
+      floatingActionButton: Container(
+        decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.purple),
+        child: IconButton(
+          icon: Icon(
+            Icons.add,
+            color: Colors.white,
+          ),
+          onPressed: () => Navigator.of(context).push(MaterialPageRoute(
+              builder: (BuildContext context) => CreateScreen(
+                    category: widget.category,
+                  ))),
         ),
       ),
     );

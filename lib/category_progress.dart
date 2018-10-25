@@ -38,7 +38,7 @@ class CategoryProgress extends StatelessWidget {
     if (finishedItems == 0) {
       return 0.0;
     }
-    return category.tasks.length.toDouble() / finishedItems;
+    return finishedItems.toDouble() / category.tasks.length;
   }
 }
 

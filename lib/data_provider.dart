@@ -11,13 +11,16 @@ CategoryState stateReducer(CategoryState oldState, dynamic action) {
     return CategoryState(oldState.categories.map((category) {
       if (category.id == action.category.id) {
         return Category(
-            category.id, category.icon, category.color, category.title,
+            category.id,
+            category.icon,
+            category.color,
+            category.title,
             category.tasks.map((task) {
-          if (task.id == action.task.id) {
-            return Task(task.id, task.name, action.status);
-          }
-          return task;
-        }).toList());
+              if (task.id == action.task.id) {
+                return Task(task.id, task.name, action.status);
+              }
+              return task;
+            }).toList());
       }
       return category;
     }).toList());
@@ -32,6 +35,18 @@ CategoryState stateReducer(CategoryState oldState, dynamic action) {
       }
       return category;
     }).toList());
+  }
+
+  if (action is AddTask) {
+    return CategoryState(
+      oldState.categories.map((category) {
+        if (category.id == action.category.id) {
+          int id = category.tasks.length;
+          category.tasks.insert(0, Task(id, action.taskTitle, false));
+        }
+        return category;
+      }).toList(),
+    );
   }
 
   throw "No such action $action";
@@ -50,4 +65,11 @@ class RemoveTask {
   final Task task;
 
   RemoveTask(this.category, this.task);
+}
+
+class AddTask {
+  final Category category;
+  final String taskTitle;
+
+  AddTask(this.category, this.taskTitle);
 }
