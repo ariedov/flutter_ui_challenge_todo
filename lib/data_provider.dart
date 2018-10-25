@@ -41,7 +41,7 @@ CategoryState stateReducer(CategoryState oldState, dynamic action) {
     return CategoryState(
       oldState.categories.map((category) {
         if (category.id == action.category.id) {
-          int id = category.tasks.length;
+          int id = category.tasks.length + 1;
           category.tasks.insert(0, Task(id, action.taskTitle, false));
         }
         return category;
