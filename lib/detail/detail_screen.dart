@@ -35,6 +35,8 @@ class _DetailScreenState extends State<DetailScreen>
   double listOpacity;
   double createOpacity;
 
+  String newTaskTitle;
+
   @override
   void initState() {
     _transitionAnimation =
@@ -46,7 +48,8 @@ class _DetailScreenState extends State<DetailScreen>
                 buttonRadius = buttonRadiusTween.evaluate(_transitionAnimation);
 
                 listOpacity = listOpacityTween.evaluate(_transitionAnimation);
-                createOpacity = createOpacityTween.evaluate(_transitionAnimation);
+                createOpacity =
+                    createOpacityTween.evaluate(_transitionAnimation);
               }))
           ..addStatusListener((status) {
             if (status == AnimationStatus.completed) {
@@ -67,27 +70,7 @@ class _DetailScreenState extends State<DetailScreen>
         child: Stack(
           children: <Widget>[
             _buildContent(),
-            Positioned(
-              bottom: buttonPosition,
-              right: buttonPosition,
-              child: Container(
-                width: buttonSize,
-                height: 48.0,
-                decoration: BoxDecoration(
-                    shape: BoxShape.rectangle,
-                    color: Colors.purple,
-                    borderRadius: BorderRadius.circular(buttonRadius)),
-                child: IconButton(
-                  icon: Icon(
-                    Icons.add,
-                    color: Colors.white,
-                  ),
-                  onPressed: () {
-                    _startTransitionAnimation();
-                  },
-                ),
-              ),
-            ),
+            _buildButton(),
           ],
         ),
       ),
@@ -184,9 +167,41 @@ class _DetailScreenState extends State<DetailScreen>
     );
   }
 
+  _buildButton() {
+    return Positioned(
+      bottom: buttonPosition,
+      right: buttonPosition,
+      child: Container(
+        width: buttonSize,
+        height: 48.0,
+        decoration: BoxDecoration(
+            shape: BoxShape.rectangle,
+            color: Colors.purple,
+            borderRadius: BorderRadius.circular(buttonRadius)),
+        child: StoreConnector<CategoryState, VoidCallback>(
+          converter: (store) =>
+              () => store.dispatch(AddTask(widget.category, newTaskTitle)),
+          builder: (context, callback) => IconButton(
+                icon: Icon(
+                  Icons.add,
+                  color: Colors.white,
+                ),
+                onPressed: () {
+                  if (creatingTask) {
+                    callback();
+                  }
+                  _startTransitionAnimation();
+                },
+              ),
+        ),
+      ),
+    );
+  }
+
   _buildCreate() {
     return CreateScreen(
       category: widget.category,
+      taskChanged: (value) => newTaskTitle = value,
       onClose: _startTransitionAnimation,
     );
   }
