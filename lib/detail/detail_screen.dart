@@ -187,8 +187,10 @@ class _DetailScreenState extends State<DetailScreen>
                   color: Colors.white,
                 ),
                 onPressed: () {
-                  if (creatingTask) {
+                  if (creatingTask 
+                  && newTaskTitle != null && newTaskTitle.isNotEmpty) {
                     callback();
+                    newTaskTitle = null;
                   }
                   _startTransitionAnimation();
                 },
