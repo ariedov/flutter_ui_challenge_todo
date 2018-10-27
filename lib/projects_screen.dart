@@ -143,6 +143,7 @@ class _ProjectScreenState extends State<ProjectsScreen> {
                                     ),
                               );
                             },
+                            snipDuration: Duration(milliseconds: 300),
                           );
                         }),
                   ),

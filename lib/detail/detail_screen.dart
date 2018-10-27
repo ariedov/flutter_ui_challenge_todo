@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
-import 'package:flutter_todo/category_icon.dart';
-import 'package:flutter_todo/category_info.dart';
 import 'package:flutter_todo/create/create_screen.dart';
 import 'package:flutter_todo/data_provider.dart';
-import 'package:flutter_todo/detail/todo_item.dart';
+import 'package:flutter_todo/list/list.dart';
 import 'package:flutter_todo/model.dart';
 
 class DetailScreen extends StatefulWidget {
@@ -34,6 +32,8 @@ class _DetailScreenState extends State<DetailScreen>
 
   double listOpacity;
   double createOpacity;
+
+  GlobalKey listKey = GlobalKey();
 
   String newTaskTitle;
 
@@ -86,6 +86,7 @@ class _DetailScreenState extends State<DetailScreen>
     listOpacityTween = Tween(begin: 1.0, end: 0.0);
     createOpacityTween = Tween(begin: 0.0, end: 1.0);
 
+
     if (creatingTask) {
       buttonSizeTween = ReverseTween(buttonSizeTween);
       buttonPositionTween = ReverseTween(buttonPositionTween);
@@ -121,50 +122,7 @@ class _DetailScreenState extends State<DetailScreen>
   }
 
   _buildTaskList() {
-    return Container(
-      padding: const EdgeInsets.all(80.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Hero(
-            tag: "categoryIcon${widget.category.title}",
-            child: CategoryIcon(
-              icon: widget.category.icon,
-              color: widget.category.color,
-            ),
-          ),
-          SizedBox(
-            height: 32.0,
-          ),
-          Hero(
-              tag: "categoryInfo${widget.category.title}",
-              child: CategoryInfo(category: widget.category)),
-          SizedBox(
-            height: 24.0,
-          ),
-          Expanded(
-            child: AnimatedOpacity(
-              opacity: 1.0,
-              child: StoreConnector<CategoryState, List<Task>>(
-                  converter: (store) => store.state.categories
-                      .firstWhere(
-                          (category) => category.id == widget.category.id)
-                      .tasks,
-                  builder: (context, tasks) {
-                    return ListView.builder(
-                      itemBuilder: (BuildContext context, int index) {
-                        final task = tasks[index];
-                        return TodoItem(category: widget.category, task: task);
-                      },
-                      itemCount: tasks.length,
-                    );
-                  }),
-              duration: Duration(milliseconds: 300),
-            ),
-          )
-        ],
-      ),
-    );
+    return TaskList(key: listKey, category: widget.category);
   }
 
   _buildButton() {
@@ -187,8 +145,9 @@ class _DetailScreenState extends State<DetailScreen>
                   color: Colors.white,
                 ),
                 onPressed: () {
-                  if (creatingTask 
-                  && newTaskTitle != null && newTaskTitle.isNotEmpty) {
+                  if (creatingTask &&
+                      newTaskTitle != null &&
+                      newTaskTitle.isNotEmpty) {
                     callback();
                     newTaskTitle = null;
                   }
