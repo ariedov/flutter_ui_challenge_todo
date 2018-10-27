@@ -45,47 +45,71 @@ class _TaskListState extends State<TaskList> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(80.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Hero(
-            tag: "categoryIcon${widget.category.title}",
-            child: CategoryIcon(
-              icon: widget.category.icon,
-              color: widget.category.color,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: IconButton(
+              icon: Icon(Icons.arrow_back),
+              onPressed: () => Navigator.of(context).pop()),
+        ),
+        Expanded(
+          child: Container(
+            padding: const EdgeInsets.only(left: 80.0, right: 80.0, top: 32.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Hero(
+                  tag: "categoryIcon${widget.category.title}",
+                  child: CategoryIcon(
+                    icon: widget.category.icon,
+                    color: widget.category.color,
+                  ),
+                ),
+                SizedBox(
+                  height: 32.0,
+                ),
+                Hero(
+                    tag: "categoryInfo${widget.category.title}",
+                    child: CategoryInfo(category: widget.category)),
+                SizedBox(
+                  height: 24.0,
+                ),
+                Text(
+                  "Today",
+                  style: Theme.of(context).textTheme.subhead,
+                ),
+                SizedBox(
+                  height: 12.0,
+                ),
+                Expanded(
+                  child: StoreConnector<CategoryState, List<Task>>(
+                      converter: (store) => store.state.categories
+                          .firstWhere(
+                              (category) => category.id == widget.category.id)
+                          .tasks,
+                      builder: (context, tasks) {
+                        return ListView.separated(
+                          separatorBuilder: (context, _) => SizedBox(
+                                height: 10.0,
+                              ),
+                          itemBuilder: (BuildContext context, int index) {
+                            final task = tasks[index];
+                            return Opacity(
+                                opacity: itemOpacities[index],
+                                child: TodoItem(
+                                    category: widget.category, task: task));
+                          },
+                          itemCount: tasks.length,
+                        );
+                      }),
+                )
+              ],
             ),
           ),
-          SizedBox(
-            height: 32.0,
-          ),
-          Hero(
-              tag: "categoryInfo${widget.category.title}",
-              child: CategoryInfo(category: widget.category)),
-          SizedBox(
-            height: 24.0,
-          ),
-          Expanded(
-            child: StoreConnector<CategoryState, List<Task>>(
-                converter: (store) => store.state.categories
-                    .firstWhere((category) => category.id == widget.category.id)
-                    .tasks,
-                builder: (context, tasks) {
-                  return ListView.builder(
-                    itemBuilder: (BuildContext context, int index) {
-                      final task = tasks[index];
-                      return Opacity(
-                          opacity: itemOpacities[index],
-                          child:
-                              TodoItem(category: widget.category, task: task));
-                    },
-                    itemCount: tasks.length,
-                  );
-                }),
-          )
-        ],
-      ),
+        ),
+      ],
     );
   }
 
